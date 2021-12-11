@@ -1,5 +1,5 @@
 output "groups" {
-  value = local.users
+  value = local.groups
 }
 
 output "users" {

@@ -1,10 +1,8 @@
 locals {
   user_policies = flatten([for user in var.users : [for policy in user.policies : { user = user.name, name = policy }] if length(user.policies) > 0])
   user_inline   = flatten([for user in var.users : [for policy in user.inline_policies : { user = user.name, name = policy }] if length(user.inline_policies) > 0])
-
-  keys = { for user in var.users : user.name => user.key if user.key != null }
-
-  users = zipmap(var.users[*].name, values(aws_iam_user.user)[*].arn)
+  keys          = { for user in var.users : user.name => user.key if user.key != null }
+  users         = zipmap(var.users[*].name, values(aws_iam_user.user)[*].arn)
 }
 
 resource "aws_iam_user" "user" {
