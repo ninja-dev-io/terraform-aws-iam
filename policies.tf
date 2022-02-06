@@ -1,4 +1,6 @@
 locals {
+
+  arns             = merge(local.groups, local.users, local.roles)
   aws_managed      = { for policy in var.aws_policies : policy => policy }
   customer_managed = { for policy in var.customer_policies : policy.name => policy }
   inline           = { for policy in var.inline_policies : policy.name => policy }
@@ -30,7 +32,7 @@ data "aws_iam_policy_document" "customer_managed_document" {
         for_each = statement.value.principals
         content {
           type        = principals.value.type
-          identifiers = principals.value.identifiers
+          identifiers = [for identifier in principals.value.identifiers : lookup(local.arns, identifier) != null ? lookup(local.arns, identifier) : identifier]
         }
       }
     }
