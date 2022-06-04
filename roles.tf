@@ -1,7 +1,7 @@
 locals {
   role_policies = flatten([for role in var.roles : [for policy in role.policies : { role = role.name, name = policy }] if length(role.policies) > 0])
   role_inline   = flatten([for role in var.roles : [for policy in role.inline_policies : { role = role.name, name = policy }] if length(role.inline_policies) > 0])
-  roles         = zipmap(var.roles[*].name, values(aws_iam_role.roles)[*].arn)
+  roles         = zipmap(keys(aws_iam_role.roles), [for role in values(aws_iam_role.roles) : { id = role.id, arn : role.arn }])
 }
 
 resource "aws_iam_role" "roles" {
